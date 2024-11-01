@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { socket } from "../socket";
-import JoinQueue from "../components/JoinQueue";
-import Latency from "../components/Latency";
+import { socket } from "../../socket";
+import JoinQueue from "../../components/JoinQueue";
+import Latency from "../../components/Latency";
 
 const HomePage = () => {
   const [serverStats, setServerStats] = useState(null);

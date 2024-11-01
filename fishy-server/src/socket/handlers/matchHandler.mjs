@@ -1,4 +1,8 @@
-import { removeFromQueue, startMatchmaking } from "../../utils/matching.mjs";
+import { gameManager } from "../../core/game/GameManager.mjs";
+import {
+  removeFromQueue,
+  startMatchmaking,
+} from "../../core/game/matching.mjs";
 import { SOCKET_EVENTS } from "../events/eventTypes.mjs";
 
 const games = [];
@@ -16,6 +20,9 @@ const matchHandler = (io, socket) => {
     });
     console.log("Matching queue:", matching_queue);
   });
+
+  // Handle all game realted Logic
+  gameManager(io, socket, games);
 
   // Handle disconnection and remove player from queue
   socket.on("disconnect", () => {

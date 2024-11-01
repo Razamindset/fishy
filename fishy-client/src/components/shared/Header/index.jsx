@@ -1,6 +1,6 @@
-import { FaUserCircle } from "react-icons/fa"; // Profile icon
-import { GiChessKnight } from "react-icons/gi"; // Knight icon
-import { Outlet } from "react-router-dom";
+import { FaUserCircle } from "react-icons/fa";
+import { GiChessKnight } from "react-icons/gi";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -14,35 +14,26 @@ const Header = () => {
 
         {/* Middle: Navigation links */}
         <div className="space-x-6">
-          <a href="#home" className="text-lg font-medium hover:text-gray-300">
+          <Link to="/" className="text-lg font-medium hover:text-gray-300">
             Home
-          </a>
-          <a
-            href="#analysis"
+          </Link>
+          <Link
+            to="/analysis"
             className="text-lg font-medium hover:text-gray-300"
           >
             Analysis
-          </a>
+          </Link>
         </div>
 
         {/* Right side: Profile Icon */}
         <div>
-          <a href="#profile" className="text-xl hover:text-gray-300">
+          <Link to="/profile" className="text-xl hover:text-gray-300">
             <FaUserCircle />
-          </a>
+          </Link>
         </div>
       </nav>
     </header>
   );
 };
 
-const HeaderWrapper = () => {
-  return (
-    <div>
-      <Header />
-      <Outlet />
-    </div>
-  );
-};
-
-export default HeaderWrapper;
+export default Header;

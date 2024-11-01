@@ -1,23 +1,31 @@
 import { useEffect, useState } from "react";
 import { socket } from "../socket";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 const JoinQueue = () => {
   const [gameData, setGameData] = useState(null);
   const navigate = useNavigate();
 
+  const { user } = useAuthStore();
+
   useEffect(() => {
     socket.on("matchmaking:match_found", (data) => {
-      navigate("/" + data.gameId);
+      navigate("/play/" + data.gameId + "?color=" + data.color, {
+        replace: true,
+      });
       setGameData(data);
     });
+
+    return () => {
+      socket.off("matchmaking:match_found");
+    };
   }, []);
 
-  const handleJoinQueue = (e) => {
-    e.preventDefault();
+  const handleJoinQueue = () => {
     socket.emit("matchmaking:queue", {
-      playerId: e.target.player_id.value,
-      playerName: "Player Name",
+      playerId: user._id,
+      playerName: user.name,
       playerRating: 1500,
       timeFormat: "blitz",
       timeSeconds: 180,
@@ -26,21 +34,12 @@ const JoinQueue = () => {
 
   return (
     <div className="border-2 border-gray-700 bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
-      <form onSubmit={handleJoinQueue} className="flex flex-col gap-4">
-        <input
-          type="text"
-          name="player_id"
-          className="p-3 border border-gray-600 rounded-md bg-gray-900 text-white"
-          placeholder="Enter Player ID"
-          required
-        />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-        >
-          Join Game Queue
-        </button>
-      </form>
+      <button
+        onClick={handleJoinQueue}
+        className="bg-green-500 text-black p-4 rounded-md"
+      >
+        Join game
+      </button>
       {gameData && (
         <div className="mt-6 p-4 bg-gray-700 rounded-md">
           <p className="text-xl font-semibold text-green-400">Match Found!</p>
