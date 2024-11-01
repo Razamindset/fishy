@@ -1,4 +1,4 @@
-export { default as HomePage } from "./root/Home";
+export { default as HomePage } from "./root/HomePage";
 export { default as PlayPage } from "./root/PlayPage";
 export { default as ProfilePage } from "./root/ProfilePage";
 export { default as NotFoundPage } from "./not-found";

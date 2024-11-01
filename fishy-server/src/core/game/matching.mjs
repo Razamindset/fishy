@@ -33,7 +33,7 @@ export const removeFromQueue = (socketId, matching_queue) => {
   }
 };
 
-export const startMatchmaking = (io, matching_queue, games) => {
+export const startMatchmaking = (io, matching_queue, games, stats) => {
   setInterval(() => {
     if (matching_queue.length < 2) return;
 
@@ -66,5 +66,9 @@ export const startMatchmaking = (io, matching_queue, games) => {
         removeFromQueue(opponent.socketId, matching_queue);
       }
     });
+
+    console.log(games);
+
+    stats.gamesToday = games.length;
   }, MATCH_CHECK_INTERVAL);
 };

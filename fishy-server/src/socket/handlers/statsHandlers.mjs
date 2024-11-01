@@ -1,64 +1,39 @@
-import { ServerStats } from "../../core/stats/serverStats.mjs";
-
-const serverStats = new ServerStats();
-
-const setupLatencyMonitoring = (io, socket) => {
-  let latency = 0;
-  
-  // Create a single reusable pong handler
-  const handlePong = (start) => {
-    latency = Date.now() - start;
-    serverStats.trackLatency(latency);
-    socket.emit("send-stats", serverStats.getStats());
-  };
-
-  const pingInterval = setInterval(() => {
-    const start = Date.now();
-    
-    // Remove any existing pong listener before adding a new one
-    socket.removeAllListeners("pong");
-    
-    // Add the new listener with the current timestamp
-    socket.once("pong", () => handlePong(start));
-    
-    // Send the ping
-    socket.emit("ping");
-  }, 5000);
-
-  // Clean up on disconnect
-  socket.on("disconnect", () => {
-    clearInterval(pingInterval);
-    socket.removeAllListeners("pong");  // Clean up any remaining pong listeners
-  });
-
-  return latency;
+const updateStats = (io, stats) => {
+  io.emit("send-stats", stats);
 };
 
-export const setupStatsHandlers = (socket, io) => {
-  // Start monitoring latency and track it in the stats system
-  setupLatencyMonitoring(io, socket);
+const setupLatencyMonitoring = (socket, stats) => {
+  const pingInterval = setInterval(() => {
+    let currentStats = stats;
 
-  // Set up handlers for other stats
-  const statsHandler = () => {
-    const currentStats = serverStats.getStats();
-    socket.emit("send-stats", currentStats);
-  };
+    const start = Date.now();
+    socket.emit("ping");
+    socket.once("pong", () => {
+      stats.latency = Date.now() - start;
+      updateStats(socket.server, currentStats);
+    });
+  }, 5000);
 
-  socket.on("request-stats", statsHandler);
-
-  // Clean up on disconnect
   socket.on("disconnect", () => {
-    socket.removeListener("request-stats", statsHandler);
+    clearInterval(pingInterval);
+  });
+};
+
+export const setupStatsHandlers = (socket, io, stats) => {
+  setupLatencyMonitoring(socket, stats);
+
+  socket.on("request-stats", () => {
+    socket.emit("send-stats", stats);
   });
 
   return {
     onConnect: () => {
-      serverStats.onUserConnect();
-      io.emit("send-stats", serverStats.getStats());
+      stats.connectedUsers++;
+      updateStats(io);
     },
     onDisconnect: () => {
-      serverStats.onUserDisconnect();
-      io.emit("send-stats", serverStats.getStats());
+      stats.connectedUsers--;
+      updateStats(io);
     },
   };
 };

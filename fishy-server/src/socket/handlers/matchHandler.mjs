@@ -18,7 +18,8 @@ const matchHandler = (io, socket) => {
       socketId: socket.id,
       queuedAt: Date.now(),
     });
-    console.log("Matching queue:", matching_queue);
+
+    console.log("game_queue", matching_queue);
   });
 
   // Handle all game realted Logic
@@ -30,8 +31,8 @@ const matchHandler = (io, socket) => {
   });
 };
 
-const startMatching = (io) => {
-  startMatchmaking(io, matching_queue, games);
+const startMatching = (io, stats) => {
+  startMatchmaking(io, matching_queue, games, stats);
 };
 
 export { matchHandler, startMatching };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Chessboard from "../../../components/board/Chessboard";
 import { Chess } from "chess.js";
-import useChessSounds from "../../../utils/useSound";
+import useChessSounds from "../../../utils/hooks/useSound";
 import { socket } from "../../../socket";
 
 function GameComponent({ gameId, color }) {
