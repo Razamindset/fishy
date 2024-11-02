@@ -8,7 +8,7 @@ const Header = () => {
       <nav className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Left side: Knight Icon and Fishy */}
         <div className="flex items-center space-x-2">
-          <GiChessKnight className="text-2xl" />
+          <GiChessKnight className="text-2xl text-orange-500" />
           <span className="text-lg font-bold">Fishy</span>
         </div>
 
