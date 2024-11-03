@@ -33,7 +33,7 @@ export const removeFromQueue = (playerId, matching_queue) => {
   }
 };
 
-export const startMatchmaking = (io, matching_queue, games, stats) => {
+export const startMatchmaking = (io, matching_queue, games, serverStats) => {
   setInterval(() => {
     if (matching_queue.length < 2) return;
 
@@ -66,6 +66,7 @@ export const startMatchmaking = (io, matching_queue, games, stats) => {
       }
     });
 
-    stats.gamesToday = games.length;
+    serverStats.incrementGamesInPlay();
+    serverStats.broadcastStats(io);
   }, MATCH_CHECK_INTERVAL);
 };

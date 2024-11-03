@@ -6,7 +6,6 @@ export default function PlayPage() {
 
   return (
     <div>
-      <h1>Play Page {gameId}</h1>
       <GameComponent gameId={gameId} />
     </div>
   );

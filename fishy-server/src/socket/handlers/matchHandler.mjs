@@ -11,7 +11,7 @@ const games = [];
 //* Every player when requests a new game he is put into this queue
 const matching_queue = [];
 
-const matchHandler = (io, socket) => {
+const matchHandler = (io, socket, serverStats) => {
   socket.on(SOCKET_EVENTS.MATCHMAKING.QUEUE, (playerData) => {
     //* If the player already exists in the queue, remove it and update with new data
     const existingReq = matching_queue.find(
@@ -27,8 +27,10 @@ const matchHandler = (io, socket) => {
     });
   });
 
+  //todo Handle other ways enter a match like throught link shairing etc
+
   // Handle all game realted Logic such as joining, leaving, making moves, etc. It uses the the array of game instances
-  gameManager(io, socket, games);
+  gameManager(io, socket, games, serverStats);
 
   // If a user disconnects from the server, remove them from the queue
   socket.on("disconnect", () => {
@@ -37,8 +39,8 @@ const matchHandler = (io, socket) => {
 };
 
 //* This function use a setInterval to check for potencial matches in the matching_queue array
-const startMatching = (io, stats) => {
-  startMatchmaking(io, matching_queue, games, stats);
+const startMatching = (io, serverStats) => {
+  startMatchmaking(io, matching_queue, games, serverStats);
 };
 
 export { matchHandler, startMatching };

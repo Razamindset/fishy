@@ -1,24 +1,12 @@
 import { matchHandler, startMatching } from "./handlers/matchHandler.mjs";
-import { setupStatsHandlers } from "./handlers/statsHandlers.mjs";
+import { setupStatsHandlers } from "./handlers/stats/statsHandlers.mjs";
 
 const setupSocketHandlers = (io) => {
-  let stats = {
-    latency: 0,
-    connectedUsers: 0,
-    gamesToday: 0,
-  };
-
   io.on("connection", (socket) => {
-    const statsHandlers = setupStatsHandlers(socket, io, stats);
-    statsHandlers.onConnect();
-
-    // All the handlers here
-    matchHandler(io, socket);
-    startMatching(io, stats);
-
-    socket.on("disconnect", () => {
-      statsHandlers.onDisconnect();
-    });
+    //* Socket Handlers
+    const { serverStats } = setupStatsHandlers(io, socket);
+    matchHandler(io, socket, serverStats);
+    startMatching(io, serverStats);
   });
 };
 

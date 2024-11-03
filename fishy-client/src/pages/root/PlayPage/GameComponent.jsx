@@ -48,11 +48,8 @@ function GameComponent({ gameId }) {
   const myColor =
     gameState?.players?.white?.playerId === user._id ? "white" : "black";
 
-
-    console.log(gameState);
-    
   return (
-    <div className="GameComponent md:p-6">
+    <div className="GameComponent md:p-6 flex items-center justify-between">
       <Chessboard
         initialFen={fen}
         chess={chess}

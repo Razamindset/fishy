@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { socket } from "../../../../socket";
-import { FaClock, FaSignal, FaUsers } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaClock, FaUsers } from "react-icons/fa";
+import { socket } from "../../../../../socket";
 
-const HomePageServerStats = () => {
+const ServerStatsComponent = () => {
   const [serverStats, setServerStats] = useState({
     connectedUsers: "?",
-    latency: "?",
-    gamesToday: "?",
+    gamesInPlay: "?",
   });
 
   useEffect(() => {
@@ -18,7 +17,7 @@ const HomePageServerStats = () => {
 
     // Set up listeners
     socket.on("connect", () => socket.emit("request-stats"));
-    socket.on("send-stats", handleStats);
+    socket.on("server:stats:update", handleStats);
 
     // Request stats if already connected
     socket.connected && socket.emit("request-stats");
@@ -38,25 +37,20 @@ const HomePageServerStats = () => {
   }, [serverStats.connectedUsers]);
 
   return (
-    <div className="bg-gray-800 border border-gray-700 p-4 rounded-lg mt-4">
+    <>
       <div className="flex items-center gap-2 text-gray-100">
         <FaUsers className="h-5 w-5" />
         <span className="font-semibold text-base">
           {serverStats.connectedUsers} players
         </span>
       </div>
-      <div className="flex items-center gap-2 text-gray-100">
-        <FaSignal className="h-5 w-5" />
-        <span className="font-semibold text-base">
-          {serverStats.latency} ms
-        </span>
-      </div>
+
       <div className="flex items-center gap-2 text-gray-400 mt-2">
         <FaClock className="h-5 w-5" />
-        <span>{serverStats.gamesToday} games in play</span>
+        <span>{serverStats.gamesInPlay} games in play</span>
       </div>
-    </div>
+    </>
   );
 };
 
-export default HomePageServerStats;
+export default ServerStatsComponent;
