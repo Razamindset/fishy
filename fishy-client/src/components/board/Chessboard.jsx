@@ -177,20 +177,12 @@ const Chessboard = ({
   };
 
   return (
-    <div
-      className={`chessboard-container ${theme} flex items-center justify-center flex-col md:block`}
-      ref={containerRef}
-    >
+    <div className={`chessboard-container w-full ${theme}`} ref={containerRef}>
       <div
         ref={chessgroundRef}
         style={{ width: boardWidth, height: boardWidth }}
       />
-      <button
-        onClick={toggleTheme}
-        className="theme-toggle-button p-2 border rounded-md m-4"
-      >
-        Toggle Theme
-      </button>
+
       <PromotionDialog
         isOpen={promotionDialogOpen}
         onClose={() => {

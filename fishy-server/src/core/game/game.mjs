@@ -107,6 +107,7 @@ export class ChessGame {
     if (this.players.black.playerId === playerId) return "black";
     return null;
   }
+
   getPlayerColorBySocketId(socketId) {
     if (this.players.white.socketId === socketId) return "white";
     if (this.players.black.socketId === socketId) return "black";
@@ -132,6 +133,15 @@ export class ChessGame {
     this.status = "completed";
     this.winner = winner;
     this.gameOverReason = reason;
+  }
+
+  resignGame(playerId) {
+    const color = this.getPlayerColor(playerId);
+    if (color) {
+      this.endGame(color === "white" ? "black" : "white", "resignation");
+      return true;
+    }
+    return false;
   }
 
   getGameState() {

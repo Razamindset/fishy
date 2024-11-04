@@ -1,3 +1,5 @@
+//? I know this is shitty code, but I'm tired and this is the best I can do right now
+
 let timerInstance = null;
 
 //! Instead of individual intervals per game, use a single interval for all games
@@ -86,6 +88,17 @@ export const gameManager = (io, socket, games, serverStats) => {
       } else {
         //* Handle connection for users other thatn players may be spectating etc leave empty for now
       }
+    }
+  });
+
+  socket.on("game:resign", (gameId, playerId) => {
+    const game = games.find((g) => g.id === gameId);
+    if (game) {
+      const resigantion = game.resignGame(playerId);
+      if (resigantion) {
+        io.to(gameId).emit("game:state:update", game.getGameState());
+      }
+      //! Remove the game from the games array or maybe wait for rematch etc
     }
   });
 

@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import GameComponent from "./GameComponent";
 
 export default function PlayPage() {

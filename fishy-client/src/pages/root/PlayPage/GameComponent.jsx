@@ -5,6 +5,9 @@ import useChessSounds from "../../../utils/hooks/useSound";
 import { socket } from "../../../socket";
 import { useAuthStore } from "../../../store/authStore";
 import ChessClockDisplay from "./Clock";
+import Buttons from "./Buttons";
+import UserIconAndClock from "./UserIconAndClock";
+import PreviousMoves from "./PreviousMoves";
 
 function GameComponent({ gameId }) {
   const [chess, setChess] = useState(new Chess());
@@ -13,16 +16,25 @@ function GameComponent({ gameId }) {
   const [gameState, setGameState] = useState(null);
   const [timeData, setTimeData] = useState(null);
   const { user } = useAuthStore();
+  const [myColor, setMyColor] = useState(null);
+  const [opponentColor, setOpponentColor] = useState(null);
 
   useEffect(() => {
     socket.emit("game:join", gameId, user._id);
 
-    socket.on("game:state:update", (gameState) => {
-      setGameState(gameState);
-      const newChess = new Chess(gameState.fen);
+    socket.on("game:state:update", (newGameState) => {
+      setGameState(newGameState);
+
+      // Update myColor based on gameState and user ID
+      const color = Object.entries(newGameState.players || {}).find(
+        ([_, player]) => player.playerId === user._id
+      )?.[0];
+      setMyColor(color);
+      setOpponentColor(myColor === "white" ? "black" : "white");
+
+      const newChess = new Chess(newGameState.fen);
       setChess(newChess);
       setFen(newChess.fen());
-      console.log("Move successful", chess.turn());
     });
 
     socket.on("game:time:update", (timeData) => {
@@ -31,8 +43,9 @@ function GameComponent({ gameId }) {
 
     return () => {
       socket.off("game:state:update");
+      socket.off("game:time:update");
     };
-  }, []);
+  }, [gameId, user._id]);
 
   const handleMove = (move) => {
     handleMoveSounds(move);
@@ -45,29 +58,48 @@ function GameComponent({ gameId }) {
     socket.emit("game:move", moveData);
   };
 
-  const myColor =
-    gameState?.players?.white?.playerId === user._id ? "white" : "black";
+  console.log();
 
   return (
-    <div className="GameComponent md:p-6 flex items-center justify-between">
-      <Chessboard
-        initialFen={fen}
-        chess={chess}
-        orientation={myColor}
-        onMove={handleMove}
-        allowMoveOpponentPieces={false}
-        customArrows={[]}
-      />
-      {gameState && (
-        <div className="mt-4">
-          <h2 className="text-xl font-bold">Game State</h2>
-          <pre className="p-4 rounded-md ">
-            {gameState.status}
-            {gameState.winner}
-          </pre>
-        </div>
-      )}
-      {timeData && <ChessClockDisplay timeData={timeData} />}
+    <div className="GameComponent p-2 flex items-center justify-between flex-wrap">
+      <div className="left w-full md:w-1/2 md:max-w-[545px] px-6">
+        <UserIconAndClock
+          userData={gameState?.players?.[opponentColor]}
+          timeData={timeData}
+          color={opponentColor}
+          position="top"
+        />
+
+        <Chessboard
+          initialFen={fen}
+          chess={chess}
+          orientation={myColor}
+          onMove={handleMove}
+          allowMoveOpponentPieces={false}
+          customArrows={[]}
+        />
+
+        <UserIconAndClock
+          userData={gameState?.players?.[myColor]}
+          timeData={timeData}
+          color={myColor}
+          position="bottom"
+        />
+      </div>
+
+      <div className="w-full md:w-1/2 p-3">
+        {gameState && (
+          <div className="mt-4">
+            <h2 className="text-xl font-bold">Game State</h2>
+            <pre className="p-4 rounded-md ">
+              {gameState.status}
+              {gameState.winner}
+            </pre>
+          </div>
+        )}
+        <PreviousMoves />
+        <Buttons />
+      </div>
     </div>
   );
 }

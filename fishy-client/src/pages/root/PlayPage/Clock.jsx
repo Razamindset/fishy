@@ -10,13 +10,10 @@ const ChessClockDisplay = ({ timeData }) => {
       .padStart(2, "0")}`;
   };
 
-
-  console.log(timeData);
-  
   return (
-    <div className="flex flex-col gap-4 w-full max-w-md mx-auto p-4">
+    <div className="flex flex-col gap-4 w-full mb-3">
       <div
-        className={`flex items-center justify-between p-4 rounded-lg border`}
+        className={`flex items-center justify-between p-4 rounded-lg border w-full`}
       >
         <div className="flex items-center gap-2">
           <MdTimer

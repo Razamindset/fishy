@@ -13,9 +13,14 @@ const AppLayout = () => {
   }
 
   return (
-    <div>
-      <Header />
-      <Outlet />
+    <div className="flex h-screen">
+      <div className="w-20 h-full">
+        <Header />
+      </div>
+
+      <div className="flex-1 overflow-y-auto">
+        <Outlet />
+      </div>
     </div>
   );
 };
