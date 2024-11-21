@@ -99,6 +99,15 @@ export const gameManager = (io, socket, games, serverStats) => {
         io.to(gameId).emit("game:state:update", game.getGameState());
       }
       //! Remove the game from the games array or maybe wait for rematch etc
+      handleGameEnd(
+        io,
+        socket,
+        games,
+        game,
+        playerId,
+        "resignation",
+        serverStats
+      );
     }
   });
 

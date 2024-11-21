@@ -4,10 +4,10 @@ import { Chess } from "chess.js";
 import useChessSounds from "../../../utils/hooks/useSound";
 import { socket } from "../../../socket";
 import { useAuthStore } from "../../../store/authStore";
-import ChessClockDisplay from "./Clock";
 import Buttons from "./Buttons";
 import UserIconAndClock from "./UserIconAndClock";
 import PreviousMoves from "./PreviousMoves";
+import GameOverModal from "./game-over-modal";
 
 function GameComponent({ gameId }) {
   const [chess, setChess] = useState(new Chess());
@@ -17,7 +17,6 @@ function GameComponent({ gameId }) {
   const [timeData, setTimeData] = useState(null);
   const { user } = useAuthStore();
   const [myColor, setMyColor] = useState(null);
-  const [opponentColor, setOpponentColor] = useState(null);
 
   useEffect(() => {
     socket.emit("game:join", gameId, user._id);
@@ -29,8 +28,8 @@ function GameComponent({ gameId }) {
       const color = Object.entries(newGameState.players || {}).find(
         ([_, player]) => player.playerId === user._id
       )?.[0];
+
       setMyColor(color);
-      setOpponentColor(myColor === "white" ? "black" : "white");
 
       const newChess = new Chess(newGameState.fen);
       setChess(newChess);
@@ -58,7 +57,7 @@ function GameComponent({ gameId }) {
     socket.emit("game:move", moveData);
   };
 
-  console.log();
+  const opponentColor = myColor === "white" ? "black" : "white";
 
   return (
     <div className="GameComponent p-2 flex items-center justify-between flex-wrap">
@@ -88,17 +87,9 @@ function GameComponent({ gameId }) {
       </div>
 
       <div className="w-full md:w-1/2 p-3">
-        {gameState && (
-          <div className="mt-4">
-            <h2 className="text-xl font-bold">Game State</h2>
-            <pre className="p-4 rounded-md ">
-              {gameState.status}
-              {gameState.winner}
-            </pre>
-          </div>
-        )}
+        <GameOverModal gameState={gameState} />
         <PreviousMoves />
-        <Buttons />
+        <Buttons gameState={gameState} userId={user._id} />
       </div>
     </div>
   );
