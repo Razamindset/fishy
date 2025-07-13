@@ -8,7 +8,7 @@ import {
   SignUpPage,
 } from "./pages";
 import AuthLayout from "./layouts/AuthLayout";
-import AppLayout from "./layouts/appLayout";
+import AppLayout from "./layouts/AppLayout";
 
 const router = createBrowserRouter([
   {
