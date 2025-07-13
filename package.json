@@ -5,7 +5,10 @@
   "main": "src/index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.mjs"
+    "dev:server": "nodemon src/index.mjs",
+    "dev:client": "npm run dev --prefix web",
+    "start": "node src/index.mjs",
+    "build": "npm install --prefix web && npm run build --prefix web"
   },
   "keywords": [],
   "author": "",
